@@ -1,0 +1,13 @@
+{
+    "name": "niclas/snowflake",
+    "description": "simple micro-framework for php",
+    "require": {
+        "phpunit/phpunit": "^4.7"
+    },
+    "authors": [
+        {
+            "name": "nickforsman",
+            "email": "niclas.forsman@outlook.com"
+        }
+    ]
+}
