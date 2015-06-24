@@ -1,6 +1,11 @@
 {
     "name": "niclas/snowflake",
     "description": "simple micro-framework for php",
+    "autoload": {
+        "psr-4": {
+            "Snowflake\\": "src/"
+        }
+    },
     "require": {
         "phpunit/phpunit": "^4.7"
     },
