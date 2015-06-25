@@ -36,6 +36,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
 		$this->request->listen(['REQUEST_METHOD' => 'PATCH']);
 	}
 
+	/**
+	 * @expectedException \Exception
+	 */ 
+	public function testThrowExceptionIfNonHttpMethodIsDetected()
+	{
+		$this->request->listen(['REQUEST_METHOD' => 'RANDOM']);
+	}
+
 	public function testChecksThatTheGivenHttpMethodIsSupported() 
 	{
 		$this->assertContains($this->method['REQUEST_METHOD'], Request::$supportedMethods);

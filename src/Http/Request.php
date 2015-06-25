@@ -22,11 +22,16 @@ class Request
 		}
 
 		if (in_array($request['REQUEST_METHOD'], self::$supportedMethods)) {
+			
 			$this->method = $request['REQUEST_METHOD'];
 			$this->uri = $request['REQUEST_URI'];
 			$this->fullUrl = $request['HTTP_HOST'] . $request['REQUEST_URI'];
-		} else {
+
+		} else if (in_array($request['REQUEST_METHOD'], self::$unsupportedMethods)) {
 			throw new UnsupportedMethodException("Snowflake does not support this HTTP METHOD", 500);
+
+		} else {
+			throw new \Exception("Error Processing Request", 1);
 		}
 	}
 

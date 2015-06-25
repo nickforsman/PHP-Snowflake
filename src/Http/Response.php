@@ -4,8 +4,8 @@ namespace Snowflake\Http;
 
 class Response 
 {
-	public static function send($response) 
+	public static function send($code) 
 	{
-		return $response;
+		return http_response_code($code);
 	}
 }
