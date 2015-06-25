@@ -9,7 +9,8 @@ class Request
 {
 
 	public $method;
-	public $url;
+	public $fullUrl;
+	public $uri;
 
 	public static $supportedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
 	public static $unsupportedMethods = ['PATCH', 'OPTIONS', 'TRACE'];
@@ -22,8 +23,8 @@ class Request
 
 		if (in_array($request['REQUEST_METHOD'], self::$supportedMethods)) {
 			$this->method = $request['REQUEST_METHOD'];
-			$this->route = $request['REQUEST_URI'];
-			$this->url = $request['HTTP_HOST'] . $request['REQUEST_URI'];
+			$this->uri = $request['REQUEST_URI'];
+			$this->fullUrl = $request['HTTP_HOST'] . $request['REQUEST_URI'];
 		} else {
 			throw new UnsupportedMethodException("Snowflake does not support this HTTP METHOD", 500);
 		}
@@ -34,13 +35,13 @@ class Request
 		return $this->method;
 	}
 
-	public function getUrl() 
+	public function getFullUrl() 
 	{
-		return $this->url;
+		return $this->fullUrl;
 	}
 
-	public function getRoute() 
+	public function getUri() 
 	{
-		return $this->route;
+		return $this->uri;
 	}
 }
