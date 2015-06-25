@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake\Core\Http\Router;
+namespace Snowflake\Http;
 
 class Router 
 {

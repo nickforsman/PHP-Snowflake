@@ -2,6 +2,6 @@
 
 require_once 'vendor/autoload.php';
 
-$app = new Snowflake\Core\Snowflake();
+$app = new Snowflake\Snowflake();
 
 $app->start();

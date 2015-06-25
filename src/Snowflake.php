@@ -1,8 +1,9 @@
 <?php
 
-namespace Snowflake\Core;
+namespace Snowflake;
 
-use Snowflake\Core\Http\Request;
+use Closure;
+use Snowflake\Http\Request;
 
 class Snowflake 
 {
@@ -18,15 +19,25 @@ class Snowflake
 
     public function start() 
     {
-        $this->request->listen('Hello');
+        $response = $this->dispatch();
+        Response::send($response);
     }
 
-    public function get($uri, $settings) 
+    public function dispatch() 
     {
-        $this->addRoute('GET', $uri $settings);
+        if (isset($_SERVER)) {
+            $this->request->listen($_SERVER);
+            $method = $this->request->getMethod();
+            $route = $this->request->getRoute();
+        }
     }
 
-    protected addRoute()
+    public function get($uri, $settings = [], Closure $callback) 
+    {
+        $this->addRoute('GET', $uri, $settings);
+    }
+
+    protected function addRoute($method, $uri, $settings)
     {
         
     }
