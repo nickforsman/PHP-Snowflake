@@ -25,11 +25,12 @@ class Snowflake
         $response = $this->dispatch();
 
         if ($response === true) {
-            Response::send(200);            
+            Response::send(200);
         } else {
             Response::send(404);
             $this->getFourOFour();
         }
+
     }
 
     public function dispatch() 
