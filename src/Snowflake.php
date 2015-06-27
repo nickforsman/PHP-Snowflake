@@ -22,10 +22,12 @@ class Snowflake
 
     public function start() 
     {
-        $response = $this->dispatch();
+        $request = $this->dispatch();
 
-        if ($response === true) {
+        if ( ! is_null($request)) {
             Response::send(200);
+            echo "<pre>", print_r($this->routes), "</pre>";
+            // $route->render($request);
         } else {
             Response::send(404);
             $this->getFourOFour();
@@ -42,7 +44,9 @@ class Snowflake
         
         $route = $method . $uri;
 
-        return array_key_exists($route, $this->routes) ? true : false; 
+        // new Route($route);
+
+        return array_key_exists($route, $this->routes) ? $route : null; 
     }
 
     public static function getFourOFour() 
@@ -57,44 +61,49 @@ class Snowflake
                 </head>
                 <body>
                 <h1>404</h1>
-                <h3>The Requested Route Cloud Not Be Found!</h3>
+                <h3>The Requested Route Could Not Be Found!</h3>
                 </body>
             </html>
         <?php    
         return ob_end_flush();
     }
 
-    public function get($uri, $settings = [], Closure $callback) 
+    public function get($uri, $settings = [], Closure $callback = null) 
     {
-        $this->addRoute('GET', $uri, $settings);
+        $this->addRoute('GET', $uri, $settings, $callback);
 
         return $this;
     }
 
-    public function post($uri, $settings = [], Closure $callback) 
+    public function post($uri, $settings = [], Closure $callback = null) 
     {
         $this->addRoute('POST', $uri, $settings);
 
         return $this;
     }
 
-    public function put($uri, $settings = [], Closure $callback) 
+    public function put($uri, $settings = [], Closure $callback = null) 
     {
-        $this->addRoute('PUT', $uri, $settings);
+        $this->addRoute('PUT', $uri, $settings, $callback);
 
         return $this;
     }
     
-    public function delete($uri, $settings = [], Closure $callback) 
+    public function delete($uri, $settings = [], Closure $callback = null) 
     {
         $this->addRoute('DELETE', $uri, $settings);
 
         return $this;
-    }        
+    }
 
-    protected function addRoute($method, $uri, $settings = [])
+    protected function addRoute($method, $uri, $settings = [], $function)
     {
-        $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings];
+        $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings, 'function' => $function];
+    }
+
+    public function getRegisteredRoutes() 
+    {
+        return $this->routes;
     }
 
 }
