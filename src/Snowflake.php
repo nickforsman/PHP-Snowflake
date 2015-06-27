@@ -5,6 +5,7 @@ namespace Snowflake;
 use Closure;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
+use Snowflake\Routing\Router;
 
 class Snowflake 
 {
@@ -12,6 +13,7 @@ class Snowflake
     const VERSION = '0.0.1'; 
 
     protected $request;
+    protected $router;
 
     protected $routes = [];
 
@@ -26,8 +28,7 @@ class Snowflake
 
         if ( ! is_null($request)) {
             Response::send(200);
-            echo "<pre>", print_r($this->routes), "</pre>";
-            // $route->render($request);
+            echo "<pre>", print_r($this->router->routes), "</pre>";
         } else {
             Response::send(404);
             $this->getFourOFour();
@@ -77,7 +78,7 @@ class Snowflake
 
     public function post($uri, $settings = [], Closure $callback = null) 
     {
-        $this->addRoute('POST', $uri, $settings);
+        $this->addRoute('POST', $uri, $settings, $callback);
 
         return $this;
     }
@@ -91,7 +92,7 @@ class Snowflake
     
     public function delete($uri, $settings = [], Closure $callback = null) 
     {
-        $this->addRoute('DELETE', $uri, $settings);
+        $this->addRoute('DELETE', $uri, $settings, $callback);
 
         return $this;
     }
@@ -99,6 +100,7 @@ class Snowflake
     protected function addRoute($method, $uri, $settings = [], $function)
     {
         $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings, 'function' => $function];
+        //$this->router = new Router($this->routes);
     }
 
     public function getRegisteredRoutes() 
