@@ -28,7 +28,7 @@ class Snowflake
 
         if ( ! is_null($request)) {
             Response::send(200);
-            echo "<pre>", print_r($this->router->routes), "</pre>";
+            echo "<pre>", print_r($this->router->getRoutes()), "</pre>";
         } else {
             Response::send(404);
             $this->getFourOFour();
@@ -44,8 +44,6 @@ class Snowflake
         $uri = $this->request->getUri();
         
         $route = $method . $uri;
-
-        // new Route($route);
 
         return array_key_exists($route, $this->routes) ? $route : null; 
     }
@@ -100,12 +98,16 @@ class Snowflake
     protected function addRoute($method, $uri, $settings = [], $function)
     {
         $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings, 'function' => $function];
-        //$this->router = new Router($this->routes);
     }
 
     public function getRegisteredRoutes() 
     {
         return $this->routes;
+    }
+
+    public function setRouter($router) 
+    {
+        $this->router = $router;
     }
 
 }
