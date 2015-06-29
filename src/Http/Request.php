@@ -13,7 +13,7 @@ class Request
 	public $uri;
 
 	public static $supportedMethods = ['GET', 'POST', 'PUT', 'DELETE'];
-	public static $unsupportedMethods = ['PATCH', 'OPTIONS', 'TRACE'];
+	public static $unsupportedMethods = ['PATCH', 'OPTIONS', 'TRACE', 'HEAD'];
 
 	public function listen($request) 
 	{
