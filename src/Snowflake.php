@@ -28,7 +28,7 @@ class Snowflake
 
         if ( ! is_null($request)) {
             Response::send(200);
-            echo "<pre>", print_r($this->router->getRoutes()), "</pre>";
+            $this->router->render($request);
         } else {
             Response::send(404);
             $this->getFourOFour();

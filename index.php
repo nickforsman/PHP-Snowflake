@@ -8,6 +8,10 @@ $app->get('/home', ['controller' => 'HomeController@index'], function() {
 	echo "Moi";
 });
 
+$app->get('/contact', [], function() {
+	echo "Not moi";
+});
+
 $app->put('/about', [], function() {
 	echo "Hello";
 });
