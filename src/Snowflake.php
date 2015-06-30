@@ -110,4 +110,8 @@ class Snowflake
         $this->router = $router;
     }
 
+    public function render() 
+    {
+    }
+
 }
