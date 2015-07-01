@@ -14,12 +14,13 @@ class Snowflake
 
     protected $request;
     protected $router;
-
+    protected $view;
     protected $routes = [];
 
     public function __construct() 
     {
         $this->request = new Request();
+        $this->view = new View();
     }
 
     public function start() 
@@ -110,8 +111,9 @@ class Snowflake
         $this->router = $router;
     }
 
-    public function render() 
+    public function render($template, $data = []) 
     {
+        $this->view->run($template, $data);
     }
 
 }
