@@ -5,6 +5,7 @@ namespace Snowflake;
 use Closure;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
+use Snowflake\Helpers\Input;
 use Snowflake\Routing\Router;
 
 class Snowflake 
@@ -16,11 +17,14 @@ class Snowflake
     protected $router;
     protected $view;
     protected $routes = [];
+    protected $input;
 
     public function __construct() 
     {
         $this->request = new Request();
         $this->view = new View();
+        $this->input = new Input();
+        $this->input->createFromGlobals();
     }
 
     public function start() 
@@ -39,14 +43,14 @@ class Snowflake
 
     public function dispatch() 
     {
-        $this->request->listen($_SERVER);
-
-        $method = $this->request->getMethod();
-        $uri = $this->request->getUri();
-        
-        $route = $method . $uri;
-
-        return array_key_exists($route, $this->routes) ? $route : null; 
+        $server = $this->input->key('server');
+        if (isset($server)) {
+            $this->request->listen($server);
+            $method = $this->request->getMethod();
+            $uri = $this->request->getUri();
+            $route = $method . $uri;
+            return array_key_exists($route, $this->routes) ? $route : null; 
+        }
     }
 
     public static function getFourOFour() 
