@@ -4,7 +4,7 @@ require_once __DIR__.'/vendor/autoload.php';
 
 $app = new Snowflake\Snowflake();
 
-$app->get('/home', [], function() use ($app) {
+$app->get('/home', ['header' => 'Application/json'], function() use ($app) {
 	
 	$data = ['name' => 'John Cena'];
 
