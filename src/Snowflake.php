@@ -30,12 +30,13 @@ class Snowflake
     public function start() 
     {
         $request = $this->dispatch();
+        $response = new Response($this->router->getRouteSettings($request));
 
         if ( ! is_null($request)) {
-            Response::send(200);
+            $response->send(200);
             $this->router->render($request);
         } else {
-            Response::send(404);
+            $response->send(404);
             $this->getFourOFour();
         }
 
