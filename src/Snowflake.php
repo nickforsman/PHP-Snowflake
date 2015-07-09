@@ -3,12 +3,13 @@
 namespace Snowflake;
 
 use Closure;
+use Snowflake\Ioc;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
 use Snowflake\Helpers\Input;
 use Snowflake\Routing\Router;
 
-class Snowflake 
+class Snowflake extends Ioc
 {
 
     const VERSION = '0.0.1'; 
@@ -21,16 +22,17 @@ class Snowflake
 
     public function __construct() 
     {
-        $this->request = new Request();
-        $this->view = new View();
-        $this->input = new Input();
+        parent::__construct();
+        $this->request = $this->resolve('Request');
+        $this->view = $this->resolve('View');
+        $this->input = $this->resolve('Input');
         $this->input->createFromGlobals();
     }
 
     public function start() 
     {
         $request = $this->dispatch();
-        $response = new Response($this->router->getRouteSettings($request));
+        $response = $this->resolve('Response', [$this->router->getRouteSettings($request)]);
 
         if ( ! is_null($request)) {
             $response->send(200);

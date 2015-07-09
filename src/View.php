@@ -5,7 +5,17 @@ namespace Snowflake;
 class View 
 {
 
-	public $templateDirectory = 'resources/views/';
+	public $templateDirectory;
+
+	public function __construct($directory = null) 
+	{
+		$default = __DIR__ . '/../resources/views/';
+		if ($directory) {
+			$this->setTemplateDirectory($directory);
+		} else {
+			$this->templateDirectory = $default;
+		}
+	}
 
 	public function render($template, array $data = null) 
 	{
@@ -25,5 +35,10 @@ class View
 	{
 		echo $this->render($template, $data);
 	}
+
+	public function setTemplateDirectory($directory) 
+	{
+		$this->templateDirectory = $directory;
+	} 
 
 }
