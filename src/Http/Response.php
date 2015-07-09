@@ -4,8 +4,23 @@ namespace Snowflake\Http;
 
 class Response 
 {
-	public static function send($status) 
+	public $headers;
+
+	public function __construct($headers = []) 
 	{
-		return http_response_code($status);
+		if ( ! empty($headers)) {
+			$this->headers = $headers;
+		}
+	}
+
+	public function send($status) 
+	{
+		if (empty($this->headers)) {
+			return http_response_code($status);			
+		} else {
+			foreach ($this->headers as $header) {
+				return header("Content-Type: $header $status");
+			}
+		}
 	}
 }
