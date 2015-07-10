@@ -19,6 +19,7 @@ class Snowflake extends Ioc
     protected $view;
     protected $routes = [];
     protected $input;
+    public $config;
 
     public function __construct() 
     {
@@ -44,7 +45,7 @@ class Snowflake extends Ioc
 
     }
 
-    public function dispatch() 
+    protected function dispatch() 
     {
         $server = $this->input->key('server');
         if (isset($server)) {
@@ -105,6 +106,10 @@ class Snowflake extends Ioc
 
     protected function addRoute($method, $uri, $settings = [], $function)
     {
+        if (isset($settings['controller']) && ! is_null($function)) {
+            throw new \InvalidArgumentException("You can only define a closure or a controller");
+        }
+
         $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings, 'function' => $function];
     }
 
@@ -121,6 +126,29 @@ class Snowflake extends Ioc
     public function render($template, $data = []) 
     {
         $this->view->run($template, $data);
+    }
+
+    public function getConfig() 
+    {
+        return $this->config;
+    }
+
+    public function load($config, $value) 
+    {
+        if (array_key_exists($config, $this->config)) {
+            $configArray = $this->config[$config];
+            if (array_key_exists($value, $configArray)) {
+                foreach ($configArray as $data => $property) {
+                    if ($data === $value) {
+                        return $property;
+                        break;
+                    } 
+                }
+            } else {
+                throw new \Exception("Configuration {$config} does not contain {$value}!");
+            }
+        }
+        throw new \Exception("The configuration file does not contain {$config} configuration.");
     }
 
 }

@@ -13,7 +13,7 @@ class View
 		if ($directory) {
 			$this->setTemplateDirectory($directory);
 		} else {
-			$this->templateDirectory = $default;
+			$this->setTemplateDirectory($default);
 		}
 	}
 
