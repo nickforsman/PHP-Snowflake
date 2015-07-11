@@ -11,9 +11,7 @@ $app->get('/home', [], function() use ($app) {
 	$data = ['name' => 'John Cena'];
 	$app->render('hello.php', $data);
 })
-->get('/contact', [], function() {
-	echo "asd";
-})
+->get('/contact', ['controller' => 'HomeController@index'])
 ->put('/about', [], function() {
 	echo "Hello";
 });

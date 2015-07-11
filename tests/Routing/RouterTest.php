@@ -2,6 +2,14 @@
 
 use Snowflake\Routing\Router;
 
+class DummyController 
+{
+    public function index() 
+    {
+        return "testing index";
+    }
+}
+
 class RouterTest extends PHPUnit_Framework_TestCase 
 {
     private $dummyRoutes = [];
@@ -70,6 +78,51 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $result = $this->router->getRouteSettings('GET/home');
 
         $expected = ['header' => 'Application/json', 'name' => 'home', 'controller' => 'index'];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testInvokesControllerAction() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'DummyController@index'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
+
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * @expectedException \Exception
+     */
+    public function testThrowsExceptionIfNoControllerIsFound() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'asdads@index'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
 
         $this->assertEquals($expected, $result);
     }
