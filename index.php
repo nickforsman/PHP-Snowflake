@@ -7,7 +7,6 @@ $app = new Snowflake\Snowflake();
 $app->config = require_once __DIR__.'/resources/main.php';
 
 $app->get('/home', [], function() use ($app) {
-	
 	$data = ['name' => 'John Cena'];
 	$app->render('hello.php', $data);
 })

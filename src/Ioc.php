@@ -2,6 +2,7 @@
 
 namespace Snowflake;
 
+use Snowflake\View\View;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
 use Snowflake\Helpers\Input;
@@ -39,7 +40,7 @@ class Ioc
 
 	public function resolve($name, $args = []) 
 	{
-        if (array_key_exists($name, static::$data)) {
+        if (isset(static::$data[$name])) {
             return call_user_func_array(static::$data[$name], $args);
         } else {
             throw new UnResolvableDependencyException("Could not resolve dependency"); 

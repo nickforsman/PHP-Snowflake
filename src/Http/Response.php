@@ -13,16 +13,17 @@ class Response
 		}
 	}
 
-	public function send($status) 
+	public function sendHeader() 
 	{
-		if (empty($this->settings)) {
-			return http_response_code($status);			
-		} else {
-			if (array_key_exists('header', $this->settings)) {
-				foreach ($this->settings as $header) {
-					return header("Content-Type: $header $status");
-				}
+		if (isset($this->settings['header'])) {
+			foreach ($this->settings as $header) {
+				return header("Content-Type: $header");
 			}
 		}
+	}
+
+	public function sendFourOFour() 
+	{
+		return http_response_code(404);
 	}
 }

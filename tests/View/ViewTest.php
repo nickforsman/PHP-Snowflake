@@ -1,6 +1,6 @@
 <?php
 
-use Snowflake\View;
+use Snowflake\View\View;
 
 class ViewTest extends PHPUnit_Framework_TestCase 
 {

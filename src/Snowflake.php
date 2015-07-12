@@ -4,6 +4,7 @@ namespace Snowflake;
 
 use Closure;
 use Snowflake\Ioc;
+use Snowflake\View\View;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
 use Snowflake\Helpers\Input;
@@ -17,7 +18,7 @@ class Snowflake extends Ioc
     protected $request;
     protected $router;
     protected $view;
-    protected $routes = [];
+    public $routes = [];
     protected $input;
     public $config;
 
@@ -32,28 +33,25 @@ class Snowflake extends Ioc
 
     public function start() 
     {
-        $request = $this->dispatch();
+        $request = $this->dispatch($this->input->key('server'));
         $response = $this->resolve('Response', [$this->router->getRouteSettings($request)]);
 
         if ( ! is_null($request)) {
-            $response->send(200);
+            $response->sendHeader();
             $this->router->render($request);
         } else {
-            $response->send(404);
+            $response->sendFourOFour();
             $this->getFourOFour();
         }
 
     }
 
-    protected function dispatch() 
+    public function dispatch($server) 
     {
-        $server = $this->input->key('server');
         if (isset($server)) {
             $this->request->listen($server);
-            $method = $this->request->getMethod();
-            $uri = $this->request->getUri();
-            $route = $method . $uri;
-            return array_key_exists($route, $this->routes) ? $route : null; 
+            $route = $this->request->getRoute();
+            return isset($this->routes[$route]) ? $route : null; 
         }
     }
 
@@ -135,9 +133,9 @@ class Snowflake extends Ioc
 
     public function load($config, $value) 
     {
-        if (array_key_exists($config, $this->config)) {
+        if (isset($this->config[$config])) {
             $configArray = $this->config[$config];
-            if (array_key_exists($value, $configArray)) {
+            if (isset($configArray[$value])) {
                 foreach ($configArray as $data => $property) {
                     if ($data === $value) {
                         return $property;

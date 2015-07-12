@@ -127,4 +127,28 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @expectedException \Exception
+     */
+    public function testThrowsExceptionIfClassMethodDoesntExist() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'DummyController@show'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
+
+        $this->assertEquals($expected, $result);
+    }
+
 }

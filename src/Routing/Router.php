@@ -8,20 +8,20 @@ class Router
 
     public $params = [];
 
-    public static $namespace = 'Snowflake\\Controllers\\';
+    public $namespace = 'Snowflake\\Controllers\\';
 
 	public function __construct($routes, $data = []) 
 	{
 		$this->routes = $routes;
 
-        if (array_key_exists('namespace', $data)) {
-            self::$namespace = $data['namespace'];
+        if (isset($data['namespace'])) {
+            $this->setNamespace($data['namespace']);
         }
 	}
 
 	public function render($route) 
 	{
-		if (array_key_exists($route, $this->routes)) {
+		if (isset($this->routes[$route])) {
             return $this->call($this->routes[$route]);
         }
 	}
@@ -40,7 +40,7 @@ class Router
     private function callActionController($action) 
     {
         list($controller, $method) = explode("@", $action['controller']);
-        $class = self::$namespace . $controller;
+        $class = $this->namespace . $controller;
         
         $class = preg_replace('/\s+/', '', $class);
 
@@ -48,6 +48,7 @@ class Router
             if (method_exists($class, $method)) {
                 return call_user_func([$class, $method]);
             }
+            throw new \Exception("Method $method was not found in class $class", 404);
         }
 
         throw new \Exception("Controller $class was not found", 404);
@@ -62,5 +63,10 @@ class Router
 	{
 		return $this->routes;
 	}
+
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+    }
 
 }
