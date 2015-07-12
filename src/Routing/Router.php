@@ -45,8 +45,9 @@ class Router
         $class = preg_replace('/\s+/', '', $class);
 
         if (class_exists($class)) {
-            if (method_exists($class, $method)) {
-                return call_user_func([$class, $method]);
+            $newclass = new $class();
+            if (method_exists($newclass, $method)) {
+                return call_user_func([$newclass, $method]);
             }
             throw new \Exception("Method $method was not found in class $class", 404);
         }
