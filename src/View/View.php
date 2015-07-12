@@ -1,6 +1,6 @@
 <?php
 
-namespace Snowflake;
+namespace Snowflake\View;
 
 class View 
 {
@@ -9,11 +9,11 @@ class View
 
 	public function __construct($directory = null) 
 	{
-		$default = __DIR__ . '/../resources/views/';
+		$default = __DIR__ . '/../../resources/views/';
 		if ($directory) {
 			$this->setTemplateDirectory($directory);
 		} else {
-			$this->templateDirectory = $default;
+			$this->setTemplateDirectory($default);
 		}
 	}
 

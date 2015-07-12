@@ -4,6 +4,7 @@ namespace Snowflake;
 
 use Closure;
 use Snowflake\Ioc;
+use Snowflake\View\View;
 use Snowflake\Http\Request;
 use Snowflake\Http\Response;
 use Snowflake\Helpers\Input;
@@ -17,8 +18,9 @@ class Snowflake extends Ioc
     protected $request;
     protected $router;
     protected $view;
-    protected $routes = [];
+    public $routes = [];
     protected $input;
+    public $config;
 
     public function __construct() 
     {
@@ -31,28 +33,25 @@ class Snowflake extends Ioc
 
     public function start() 
     {
-        $request = $this->dispatch();
+        $request = $this->dispatch($this->input->key('server'));
         $response = $this->resolve('Response', [$this->router->getRouteSettings($request)]);
 
         if ( ! is_null($request)) {
-            $response->send(200);
+            $response->sendHeader();
             $this->router->render($request);
         } else {
-            $response->send(404);
+            $response->sendFourOFour();
             $this->getFourOFour();
         }
 
     }
 
-    public function dispatch() 
+    public function dispatch($server) 
     {
-        $server = $this->input->key('server');
         if (isset($server)) {
             $this->request->listen($server);
-            $method = $this->request->getMethod();
-            $uri = $this->request->getUri();
-            $route = $method . $uri;
-            return array_key_exists($route, $this->routes) ? $route : null; 
+            $route = $this->request->getRoute();
+            return isset($this->routes[$route]) ? $route : null; 
         }
     }
 
@@ -105,6 +104,10 @@ class Snowflake extends Ioc
 
     protected function addRoute($method, $uri, $settings = [], $function)
     {
+        if (isset($settings['controller']) && ! is_null($function)) {
+            throw new \InvalidArgumentException("You can only define a closure or a controller");
+        }
+
         $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'settings' => $settings, 'function' => $function];
     }
 
@@ -121,6 +124,29 @@ class Snowflake extends Ioc
     public function render($template, $data = []) 
     {
         $this->view->run($template, $data);
+    }
+
+    public function getConfig() 
+    {
+        return $this->config;
+    }
+
+    public function load($config, $value) 
+    {
+        if (isset($this->config[$config])) {
+            $configArray = $this->config[$config];
+            if (isset($configArray[$value])) {
+                foreach ($configArray as $data => $property) {
+                    if ($data === $value) {
+                        return $property;
+                        break;
+                    } 
+                }
+            } else {
+                throw new \Exception("Configuration {$config} does not contain {$value}!");
+            }
+        }
+        throw new \Exception("The configuration file does not contain {$config} configuration.");
     }
 
 }

@@ -2,34 +2,19 @@
 
 use Snowflake\Routing\Router;
 
+class DummyController 
+{
+    public function index() 
+    {
+        return "testing index";
+    }
+}
+
 class RouterTest extends PHPUnit_Framework_TestCase 
 {
     private $dummyRoutes = [];
     private $callback;
     
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testThrowsExceptionIfBothAControllerAndACallbackIsSet() 
-    {
-        $this->callback = function() {};
-
-        $this->dummyRoutes = [
-            'GET/home' => [
-                'method' => 'GET',
-                'uri' => '/home',
-                'settings' => [
-                    'controller' => 'HomeController@index'
-                ],
-                'function' => $this->callback
-            ]
-        ];
-
-        $this->router = new Router($this->dummyRoutes);
-
-        $this->router->render('GET/home');
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -66,13 +51,11 @@ class RouterTest extends PHPUnit_Framework_TestCase
 
         $this->router = new Router($this->dummyRoutes);
 
-        if (isset($this->dummyRoutes['GET/home']['function'])) {
-            $result = call_user_func($this->dummyRoutes['GET/home']['function']);
-        }
+        $result = call_user_func($this->dummyRoutes['GET/home']['function']);
 
         $expected = $this->router->render('GET/home');
 
-        $this->assertEquals($expected[0], $result);
+        $this->assertEquals($expected, $result);
     }
 
     public function testExtractsSettingsArrayFromRoute() 
@@ -92,9 +75,78 @@ class RouterTest extends PHPUnit_Framework_TestCase
 
         $this->router = new Router($this->dummyRoutes);
 
-        $result = $this->router->render('GET/home');
+        $result = $this->router->getRouteSettings('GET/home');
 
         $expected = ['header' => 'Application/json', 'name' => 'home', 'controller' => 'index'];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testInvokesControllerAction() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'DummyController@index'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
+
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * @expectedException \Exception
+     */
+    public function testThrowsExceptionIfNoControllerIsFound() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'asdads@index'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testThrowsExceptionIfClassMethodDoesntExist() 
+    {
+        $this->dummyRoutes = [
+            'GET/home' => [
+                'method' => 'GET',
+                'uri' => '/home',
+                'settings' => [
+                    'controller' => 'DummyController@show'
+                ],
+                'function' => null
+            ]
+        ];
+
+        $this->router = new Router($this->dummyRoutes, ['namespace' => '']);
+
+        $expected = $this->router->render('GET/home');
+        $result = "testing index";
 
         $this->assertEquals($expected, $result);
     }

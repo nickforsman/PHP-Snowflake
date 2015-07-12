@@ -29,7 +29,6 @@ class Request
 
 		} else if (in_array($request['REQUEST_METHOD'], self::$unsupportedMethods)) {
 			throw new UnsupportedMethodException("Snowflake does not support this HTTP METHOD", 500);
-
 		} else {
 			throw new \Exception("Error Processing Request", 1);
 		}
@@ -43,6 +42,11 @@ class Request
 	public function getFullUrl() 
 	{
 		return $this->fullUrl;
+	}
+
+	public function getRoute() 
+	{
+		return $this->method . $this->uri;
 	}
 
 	public function getUri() 
