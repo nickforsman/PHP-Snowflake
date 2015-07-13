@@ -10,8 +10,14 @@ use Snowflake\Exceptions\UnResolvableDependencyException;
 
 class Ioc 
 {
+    /**
+     * @var array All dependencies are stored here
+     */
 	protected static $data = [];
 
+    /**
+     * Constructor
+     */
 	public function __construct() 
 	{
         self::register([
@@ -27,6 +33,11 @@ class Ioc
         );
 	}
 
+    /**
+     * Register dependency to container
+     * @param array | string $dependency to be added to container
+     * @param array $data optional arguments for the dependency
+     */
 	public static function register($dependencies, $data = []) 
 	{
         if (is_array($dependencies)) {
@@ -38,6 +49,13 @@ class Ioc
         }
 	}
 
+    /**
+     * Resolves dependency from container
+     * @param string $name The dependency to be resolved
+     * @param array $args Optional arguments for dependency
+     * @return mixed New instance of the dependency
+     * @throws UnResolvableDependencyException
+     */
 	public function resolve($name, $args = []) 
 	{
         if (isset(static::$data[$name])) {

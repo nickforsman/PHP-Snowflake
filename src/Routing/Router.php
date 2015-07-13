@@ -4,12 +4,21 @@ namespace Snowflake\Routing;
 
 class Router 
 {
+    /**
+     * @var array The routes set by the application
+     */
 	public $routes = [];
 
-    public $params = [];
+    /**
+     * @var string The namespace for the controllers
+     */
+    public $namespace;
 
-    public $namespace = 'Snowflake\\Controllers\\';
-
+    /**
+     * Constructor
+     * @param array $routes The registered routes for the applicaition
+     * @param array $data Optional settings for this class, e.g controller namespace
+     */
 	public function __construct($routes, $data = []) 
 	{
 		$this->routes = $routes;
@@ -19,6 +28,11 @@ class Router
         }
 	}
 
+    /**
+     * Returns the requested route
+     * @param string $route the route name
+     * @return mixed New instance of callback or controller
+     */
 	public function render($route) 
 	{
 		if (isset($this->routes[$route])) {
@@ -26,6 +40,12 @@ class Router
         }
 	}
 
+    /**
+     * Instantiate the route controller or callback
+     * @param string $route the route name
+     * @return mixed New instance of callback or controller
+     * @throws \InvalidArgumentException
+     */
     protected function call($action) 
     {
         if (isset($action['function']) && ! isset($action['settings']['controller'])) {
@@ -37,6 +57,12 @@ class Router
         }
     }
 
+    /**
+     * Calls the route controller
+     * @param array $action the settings array
+     * @return mixed New instance of controller
+     * @throws \Exception
+     */
     private function callActionController($action) 
     {
         list($controller, $method) = explode("@", $action['controller']);
@@ -55,16 +81,29 @@ class Router
         throw new \Exception("Controller $class was not found", 404);
     }
 
+    /**
+     * Returns the settings array for a route
+     * @param string $route The route name
+     * @return array | null
+     */
 	public function getRouteSettings($route) 
 	{
 		return isset($this->routes[$route]['settings']) ? $this->routes[$route]['settings'] : null;
 	}
 
+    /**
+     * Gets all routes
+     * @return array Routes array
+     */
 	public function getRoutes() 
 	{
 		return $this->routes;
 	}
 
+    /**
+     * Sets the namespace for the applcation
+     * @param string $namespace The namespace for the controllers
+     */
     public function setNamespace($namespace)
     {
         $this->namespace = $namespace;
